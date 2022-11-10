@@ -1,0 +1,18 @@
+fileignoreconfig:
+- filename: src/main/resources/db/migration/V1.1__CreateCustomerTable.sql
+  checksum: 0c966161161ea470efdb6b67d5fce11960a78633b66693818b0f58e0167652b2
+- filename: src/main/resources/db/migration/V1.2__CreateAccountTable.sql
+  checksum: b5b8ae8cda35e39a6d14aebb30861690da1b695325811348a9cb0b2cacad1f16
+- filename: src/main/resources/db/migration/V1.3__CreateTransactionTable.sql
+  checksum: fdd38358aadf4adfbaf7341c503acac0010da4bf0c1531c72af6cab01f93b833
+- filename: README.md
+  checksum: 796a5ce28f9f240fd6f16ce41e19c0a0acbedec24d07fe6f798118bb804ced15
+- filename: build.gradle
+  checksum: 465a7ab65d76035d21d9b7fa514f56d33920fa015370bb95d2088127d66fd8e8
+- filename: src/main/resources/application.yml
+  checksum: ae726f38b53c0126e43bd36d6937e0e664722fe1e0cfa4f5aaee8286f55e5f15
+- filename: src/main/java/com/example/bankaccount/model/Customer.java
+  checksum: eb7f127329211b8a9eedb0dadd4cec96015610672686e6a8fbf6f8c8e6b572cb
+- filename: src/test/java/com/example/bankaccount/controller/CustomerControllerIntegrationTest.java
+  checksum: a23c6b6b24ab2fb08225ce131a3f796e458f44180b8ac3ffd90a0baae3f64ec9
+version: ""
