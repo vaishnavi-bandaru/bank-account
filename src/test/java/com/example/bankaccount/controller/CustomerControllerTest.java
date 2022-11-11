@@ -32,10 +32,13 @@ public class CustomerControllerTest {
     @Autowired
     AccountRepository accountRepository;
 
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @BeforeEach
     public void before(){
         accountRepository.deleteAll();
         customerRepository.deleteAll();
+        bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     @AfterEach
@@ -46,7 +49,6 @@ public class CustomerControllerTest {
 
     @Test
     void shouldBeAbleToLoginSuccessfully() throws Exception {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Customer customer = new Customer("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password"));
         customerRepository.save(customer);
 
@@ -60,7 +62,7 @@ public class CustomerControllerTest {
     void shouldShowUnauthorizedWhenUserDoesNotHaveAccount() throws Exception {
 
         mockMvc.perform(get("/login")
-                        .with(httpBasic("abc@gmail.com", "password")))
+                        .with(httpBasic("abc@gmail.com", bCryptPasswordEncoder.encode("password"))))
                 .andExpect(status().isUnauthorized());
     }
 }
