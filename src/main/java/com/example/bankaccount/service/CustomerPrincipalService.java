@@ -21,7 +21,7 @@ public class CustomerPrincipalService implements UserDetailsService {
         return new CustomerPrincipal(customer);
     }
 
-    private Customer getByEmail(String email) {
+    public Customer getByEmail(String email) {
         return customerRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("user not found"));
     }
 }

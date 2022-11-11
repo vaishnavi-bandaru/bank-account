@@ -9,8 +9,6 @@ import java.util.Map;
 
 @RestController
 public class CustomerController {
-
-
     @GetMapping("/login")
     public Map<String, Object> login(Principal principal){
         String email = principal.getName();
