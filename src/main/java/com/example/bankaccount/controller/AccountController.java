@@ -2,6 +2,7 @@ package com.example.bankaccount.controller;
 
 import com.example.bankaccount.controller.request.CustomerSignupRequest;
 import com.example.bankaccount.controller.response.SummaryResponse;
+import com.example.bankaccount.exceptions.AccountAlreadyExistsException;
 import com.example.bankaccount.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,13 +20,13 @@ public class AccountController {
 
     @PostMapping("/signup")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void signup(@RequestBody CustomerSignupRequest customerSignupRequest) throws IOException{
+    public void signup(@RequestBody CustomerSignupRequest customerSignupRequest) throws IOException, AccountAlreadyExistsException {
         accountService.save(customerSignupRequest);
     }
 
     @GetMapping("/summary")
     @ResponseStatus(code = HttpStatus.OK)
-    public SummaryResponse getSummary(Principal principal){
+    public SummaryResponse getSummary(Principal principal) {
         SummaryResponse summary = accountService.summary(principal.getName());
         return summary;
     }

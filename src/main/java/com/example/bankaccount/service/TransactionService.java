@@ -44,7 +44,7 @@ public class TransactionService {
         long accountNumber = account.getId();
         List<Transaction> transactions = transactionRepository.findByAccountId(accountNumber);
         List<TransactionResponse> transactionResponse = new ArrayList<>();
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             transactionResponse.add(new TransactionResponse(transaction.getId(), transaction.getTransaction_type(), transaction.getTransaction_amount()));
         }
         return new StatementResponse(accountNumber, account.getCustomer().getName(), transactionResponse, account.getBalance());

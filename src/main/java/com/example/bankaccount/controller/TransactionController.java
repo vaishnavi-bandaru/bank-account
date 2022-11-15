@@ -22,14 +22,14 @@ public class TransactionController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void transaction(Principal principal, @RequestBody TransactionRequest transactionRequest){
+    public void transaction(Principal principal, @RequestBody TransactionRequest transactionRequest) {
         Account account = accountService.getAccount(principal.getName());
         transactionService.makeTransaction(account, transactionRequest.getType(), transactionRequest.getAmount());
     }
 
     @GetMapping("/statement")
     @ResponseStatus(code = HttpStatus.OK)
-    public StatementResponse getStatement(Principal principal){
+    public StatementResponse getStatement(Principal principal) {
         StatementResponse statementResponse = transactionService.statement(principal.getName());
         return statementResponse;
     }
