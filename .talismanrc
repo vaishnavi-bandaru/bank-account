@@ -1,4 +1,17 @@
 fileignoreconfig:
+- filename: src/main/resources/db/migration/V1.2__CreateAccountTable.sql
+  checksum: 73de73073e914cd9189959b606ab34ac7f19d18f52aa64270e21d4593a3a5743
+- filename: src/main/resources/db/migration/V1.3__CreateTransactionTable.sql
+  checksum: 0253914d8a8d9c84e5e2c999fea8181cb023f8d78e63737eb76914b6f3b306ac
+- filename: src/main/resources/application-test.yml
+  checksum: 2c77aa7397b7dc15b35e1f61c023f1da3d8e7821751fdc8fc18ae55ebfd4c6a7
+- filename: src/test/java/com/example/bankaccount/integration/TransactionControllerIntegrationTest.java
+  checksum: 3d88ab61b9b3e877d4c81157b2d639da47e9007e7d3019922f370894e11d1481
+- filename: src/test/java/com/example/bankaccount/controller/TransactionControllerTest.java
+  checksum: 41491639d16665968d26926d74dc87fa5f98fb2025a7f2ca16438d4a18d67543
+- filename: src/test/java/com/example/bankaccount/service/TransactionServiceTest.java
+  checksum: 2b78b9cba1fafdc64869d108956994f1594123000db8cb5819330f40473b84bd
+
 - filename: src/main/java/com/example/bankaccount/service/AccountService.java
   checksum: 802768fd9edb7a9949b9f6f0dab0fd7862b215a7c703704eb88df1a12b9f6fdb
 - filename: src/test/java/com/example/bankaccount/controller/CustomerControllerTest.java

@@ -13,5 +13,4 @@ public class CustomerSignupRequest {
     private String name;
     private String email;
     private String password;
-
 }

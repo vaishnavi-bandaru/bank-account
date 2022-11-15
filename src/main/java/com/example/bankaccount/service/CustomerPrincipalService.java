@@ -1,5 +1,6 @@
 package com.example.bankaccount.service;
 
+import com.example.bankaccount.controller.request.CustomerSignupRequest;
 import com.example.bankaccount.model.Customer;
 import com.example.bankaccount.model.CustomerPrincipal;
 import com.example.bankaccount.repo.CustomerRepository;
@@ -23,5 +24,9 @@ public class CustomerPrincipalService implements UserDetailsService {
 
     public Customer getByEmail(String email) {
         return customerRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("user not found"));
+    }
+
+    public void save(Customer customer) {
+        customerRepository.save(customer);
     }
 }

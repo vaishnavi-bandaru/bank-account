@@ -1,16 +1,20 @@
 package com.example.bankaccount.service;
 
 import com.example.bankaccount.controller.request.CustomerSignupRequest;
+import com.example.bankaccount.controller.response.SummaryResponse;
+import com.example.bankaccount.model.Account;
 import com.example.bankaccount.model.Customer;
 import com.example.bankaccount.repo.AccountRepository;
 import com.example.bankaccount.repo.CustomerRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.util.Optional;
-
+import java.math.BigDecimal;
+import java.util.Date;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -27,6 +31,7 @@ public class AccountServiceTest {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
     @BeforeEach
     public void beforeEach(){
         customerRepository = mock(CustomerRepository.class);
@@ -35,12 +40,18 @@ public class AccountServiceTest {
         bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
+    @AfterEach
+    public void after(){
+        accountRepository.deleteAll();
+        customerRepository.deleteAll();
+    }
+
     @Test
-    void shouldBeAbleToCreateAccountForCustomer() {
-        Customer customer = new Customer("abc", "abc@gmail.com", "password");
+    void shouldBeAbleToCreateAccountForCustomer(){
+        Customer customer = new Customer("abc", "xyz@gmail.com", "password");
         AccountService accountService = new AccountService(accountRepository, customerRepository, customerPrincipalService);
         CustomerSignupRequest customerSignupRequest = new CustomerSignupRequest("abc", "abc@gmail.com", "password");
-        when(customerRepository.findByEmail("abc@gmail.com")).thenReturn(Optional.of(customer));
+        when(customerPrincipalService.getByEmail("abc@gmail.com")).thenReturn(customer);
 
         accountService.save(customerSignupRequest);
 
@@ -48,14 +59,34 @@ public class AccountServiceTest {
     }
 
     @Test
-    void shouldBeAbleToSaveCustomer() {
+    void shouldBeAbleToReturnAccountWhenCustomerEmailIsGiven() {
         Customer customer = new Customer("abc", "abc@gmail.com", "password");
+        customerRepository.save(customer);
+        Account account = new Account(new Date(), new BigDecimal(0), customer);
+        accountRepository.save(account);
+        long customer_id = customer.getId();
+        when(customerPrincipalService.getByEmail("abc@gmail.com")).thenReturn(customer);
+        when(accountRepository.findByCustomer_Id(customer_id)).thenReturn(account);
         AccountService accountService = new AccountService(accountRepository, customerRepository, customerPrincipalService);
-        CustomerSignupRequest customerSignupRequest = new CustomerSignupRequest("abc", "abc@gmail.com", "password");
-        when(customerRepository.findByEmail("abc@gmail.com")).thenReturn(Optional.of(customer));
 
-        accountService.save(customerSignupRequest);
+        Account fetchedAccount = accountService.getAccount(customer.getEmail());
 
-        verify(customerRepository).save(any());
+        assertThat(fetchedAccount, is(account));
+    }
+
+    @Test
+    void shouldBeAbleToFetchSummaryOfCustomer(){
+        Customer customer = new Customer("abc", "abc@gmail.com", "password");
+        customerRepository.save(customer);
+        Account account = new Account(new Date(), new BigDecimal(100), customer);
+        accountRepository.save(account);
+        when(customerPrincipalService.getByEmail("abc@gmail.com")).thenReturn(customer);
+        AccountService accountService = new AccountService(accountRepository, customerRepository, customerPrincipalService);
+        when(accountService.getAccount("abc@gmail.com")).thenReturn(account);
+        SummaryResponse expectedSummary = new SummaryResponse(account.getId(), customer.getName(), account.getBalance());
+
+        SummaryResponse actualSummary = accountService.summary("abc@gmail.com");
+
+        assertThat(actualSummary, is(expectedSummary));
     }
 }

@@ -1,23 +1,32 @@
 package com.example.bankaccount.controller;
 
 import com.example.bankaccount.controller.request.CustomerSignupRequest;
+import com.example.bankaccount.controller.response.SummaryResponse;
 import com.example.bankaccount.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
-@RequestMapping
+@RequestMapping("account")
+@AllArgsConstructor
 public class AccountController {
 
-    @Autowired
-    private AccountService accountService;
+    AccountService accountService;
 
     @PostMapping("/signup")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void signup(@RequestBody CustomerSignupRequest customerSignupRequest) throws IOException {
+    public void signup(@RequestBody CustomerSignupRequest customerSignupRequest) throws IOException{
         accountService.save(customerSignupRequest);
+    }
+
+    @GetMapping("/summary")
+    @ResponseStatus(code = HttpStatus.OK)
+    public SummaryResponse getSummary(Principal principal){
+        SummaryResponse summary = accountService.summary(principal.getName());
+        return summary;
     }
 }

@@ -1,6 +1,5 @@
 package com.example.bankaccount.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +16,7 @@ import java.util.Date;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long account_number;
+    private long id;
 
     private Date date_opened;
 

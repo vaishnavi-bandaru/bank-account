@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test_bankaccount
+    username: bankaccount
+    password: bankaccount
+logging:
+  level:
+    root: INFO
+server:
+  servlet:
+    context-path: /bankaccount/api/v1

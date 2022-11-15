@@ -12,16 +12,24 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootTest(classes = BankaccountApplication.class)
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class CustomerControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -32,13 +40,11 @@ public class CustomerControllerTest {
     @Autowired
     AccountRepository accountRepository;
 
-    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @BeforeEach
     public void before(){
         accountRepository.deleteAll();
         customerRepository.deleteAll();
-        bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     @AfterEach
@@ -48,21 +54,17 @@ public class CustomerControllerTest {
     }
 
     @Test
-    void shouldBeAbleToLoginSuccessfully() throws Exception {
-        Customer customer = new Customer("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password"));
-        customerRepository.save(customer);
+    void shouldBeAbleToLoginSuccessfully(){
+        String email = "abc@gmail.com";
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn(email);
+        CustomerController customerController = new CustomerController();
+        Map<String,Object> expectedResponse = new HashMap<>();
+        expectedResponse.put("email", email);
 
-        mockMvc.perform(get("/login")
-                .with(httpBasic("abc@gmail.com", "password")))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("email").value("abc@gmail.com"));
+        Map<String, Object> response = customerController.login(principal);
+
+        assertThat(response, is(expectedResponse));
     }
 
-    @Test
-    void shouldShowUnauthorizedWhenUserDoesNotHaveAccount() throws Exception {
-
-        mockMvc.perform(get("/login")
-                        .with(httpBasic("abc@gmail.com", bCryptPasswordEncoder.encode("password"))))
-                .andExpect(status().isUnauthorized());
-    }
 }

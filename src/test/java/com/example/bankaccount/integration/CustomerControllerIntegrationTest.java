@@ -1,8 +1,12 @@
-package com.example.bankaccount.controller;
+package com.example.bankaccount.integration;
 
 import com.example.bankaccount.BankaccountApplication;
 import com.example.bankaccount.model.Customer;
+import com.example.bankaccount.repo.AccountRepository;
+import com.example.bankaccount.repo.CustomerRepository;
+import com.example.bankaccount.repo.TransactionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
@@ -16,20 +20,40 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.net.http.HttpResponse;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = BankaccountApplication.class)
 @WithMockUser
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class CustomerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
+    AccountRepository accountRepository;
+
+    @Autowired
+    TransactionRepository transactionRepository;
+
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @BeforeEach
+    public void before(){
+        transactionRepository.deleteAll();
+        accountRepository.deleteAll();
+        customerRepository.deleteAll();
+        bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    }
 
     @Test
     void shouldInvokeCustomerEndpoint() throws Exception {
@@ -42,6 +66,12 @@ public class CustomerControllerIntegrationTest {
         ).andReturn();
 
         assertThat(mvcResult.getResponse().getStatus(), is(HttpStatus.OK.value()));
-        assertThat(mvcResult.getResponse().getContentAsString(), is("{\"email\":\"user\"}"));
+    }
+
+    @Test
+    void shouldShowUnauthorizedWhenUserDoesNotHaveAccount() throws Exception {
+        mockMvc.perform(get("/login")
+                        .with(httpBasic("abc@gmail.com", bCryptPasswordEncoder.encode("password"))))
+                .andExpect(status().isUnauthorized());
     }
 }
