@@ -8,10 +8,11 @@ import com.example.bankaccount.model.Customer;
 import com.example.bankaccount.repo.AccountRepository;
 import com.example.bankaccount.repo.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -19,40 +20,26 @@ import java.util.Date;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-
+@ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
-    @Autowired
+    @Mock
     private AccountRepository accountRepository;
-    @Autowired
+    @Mock
     private CustomerRepository customerRepository;
-
-    @Autowired
+    @Mock
     private CustomerPrincipalService customerPrincipalService;
-
-    @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
-    @BeforeEach
-    public void beforeEach(){
-        customerRepository = mock(CustomerRepository.class);
-        accountRepository = mock(AccountRepository.class);
-        customerPrincipalService = mock(CustomerPrincipalService.class);
-        bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    }
-
-    @AfterEach
-    public void after(){
-        accountRepository.deleteAll();
-        customerRepository.deleteAll();
-    }
+    @InjectMocks
+    AccountService accountService;
 
     @Test
     void shouldBeAbleToCreateAccountForCustomer() throws AccountAlreadyExistsException {
-        AccountService accountService = new AccountService(accountRepository, customerPrincipalService);
-        CustomerSignupRequest customerSignupRequest = new CustomerSignupRequest("abc", "abc@gmail.com", "password");
+        String email = "abc@gmail.com";
+        CustomerSignupRequest customerSignupRequest = new CustomerSignupRequest("abc", email, "password");
+        Customer customer = new Customer();
+        when(customerPrincipalService.getByEmail(email)).thenReturn(customer);
 
         accountService.save(customerSignupRequest);
 
@@ -68,7 +55,6 @@ public class AccountServiceTest {
         long customer_id = customer.getId();
         when(customerPrincipalService.getByEmail("abc@gmail.com")).thenReturn(customer);
         when(accountRepository.findByCustomer_Id(customer_id)).thenReturn(account);
-        AccountService accountService = new AccountService(accountRepository, customerPrincipalService);
 
         Account fetchedAccount = accountService.getAccount(customer.getEmail());
 
@@ -82,7 +68,6 @@ public class AccountServiceTest {
         Account account = new Account(new Date(), new BigDecimal(100), customer);
         accountRepository.save(account);
         when(customerPrincipalService.getByEmail("abc@gmail.com")).thenReturn(customer);
-        AccountService accountService = new AccountService(accountRepository,  customerPrincipalService);
         when(accountService.getAccount("abc@gmail.com")).thenReturn(account);
         SummaryResponse expectedSummary = new SummaryResponse(account.getId(), customer.getName(), account.getBalance());
 

@@ -7,34 +7,24 @@ import com.example.bankaccount.exceptions.AccountAlreadyExistsException;
 import com.example.bankaccount.model.Account;
 import com.example.bankaccount.model.Customer;
 import com.example.bankaccount.repo.AccountRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
+@AllArgsConstructor
 @Service
 public class AccountService {
-
-
     private AccountRepository accountRepository;
-
     private CustomerPrincipalService customerPrincipalService;
 
-    private SecurityConfig securityConfig;
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public AccountService(AccountRepository accountRepository, CustomerPrincipalService customerPrincipalService) {
-        this.accountRepository = accountRepository;
-        this.customerPrincipalService = customerPrincipalService;
-        securityConfig = new SecurityConfig(customerPrincipalService);
-        passwordEncoder = securityConfig.getPasswordEncoder();
-    }
 
     public void save(CustomerSignupRequest customerSignupRequest) throws AccountAlreadyExistsException {
-        String password = passwordEncoder.encode(customerSignupRequest.getPassword());
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String password = bCryptPasswordEncoder.encode(customerSignupRequest.getPassword());
         Customer customer = new Customer(customerSignupRequest.getName(), customerSignupRequest.getEmail(), password);
         customerPrincipalService.save(customerSignupRequest, customer);
 
