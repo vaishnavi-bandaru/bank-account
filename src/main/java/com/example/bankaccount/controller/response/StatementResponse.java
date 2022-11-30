@@ -1,9 +1,7 @@
 package com.example.bankaccount.controller.response;
 
-import com.example.bankaccount.model.Transaction;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -12,8 +10,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class StatementResponse {
     private Long accountNumber;
     private String accountHolderName;

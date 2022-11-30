@@ -43,10 +43,11 @@ public class TransactionService {
         Account account = accountService.getAccount(email);
         long accountNumber = account.getId();
         List<Transaction> transactions = transactionRepository.findByAccountId(accountNumber);
-        List<TransactionResponse> transactionResponse = new ArrayList<>();
+        List<TransactionResponse> transactionResponses = new ArrayList<>();
         for (Transaction transaction : transactions) {
-            transactionResponse.add(new TransactionResponse(transaction.getId(), transaction.getTransaction_type(), transaction.getTransaction_amount()));
+            TransactionResponse transactionResponse = TransactionResponse.builder().id(transaction.getId()).type(transaction.getTransaction_type()).amount(transaction.getTransaction_amount()).build();
+            transactionResponses.add(transactionResponse);
         }
-        return new StatementResponse(accountNumber, account.getCustomer().getName(), transactionResponse, account.getBalance());
+        return StatementResponse.builder().accountNumber(accountNumber).accountHolderName(account.getCustomer().getName()).transactions(transactionResponses).balance(account.getBalance()).build();
     }
 }
