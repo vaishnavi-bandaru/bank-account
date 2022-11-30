@@ -11,6 +11,10 @@ import com.example.bankaccount.service.TransactionService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -20,38 +24,23 @@ import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class TransactionControllerTest {
-
-    @Autowired
+    @Mock
     AccountRepository accountRepository;
-
-    @Autowired
+    @Mock
     CustomerRepository customerRepository;
-
-    @Autowired
+    @Mock
     TransactionService transactionService;
-
-    @Autowired
+    @Mock
     AccountService accountService;
-
-    @BeforeEach
-    public void before(){
-        transactionService = mock(TransactionService.class);
-        accountService = mock(AccountService.class);
-        customerRepository = mock(CustomerRepository.class);
-        accountRepository = mock(AccountRepository.class);
-    }
-
-    @AfterEach
-    public void after(){
-        accountRepository.deleteAll();
-        customerRepository.deleteAll();
-    }
+    @InjectMocks
+    TransactionController transactionController;
+    @Mock
+    Principal principal;
 
     @Test
     void shouldBeAbleToCreditAmountInAccountOfAUser() {
-        TransactionController transactionController = new TransactionController(accountService, transactionService);
-        Principal principal = mock(Principal.class);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Customer customer = new Customer("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password"));
         Customer savedCustomer = customerRepository.save(customer);
@@ -69,8 +58,6 @@ public class TransactionControllerTest {
     @Test
     void shouldBeAbleToGetStatementOfAUser() {
         String email = "abc@gmail.com";
-        TransactionController transactionController = new TransactionController(accountService, transactionService);
-        Principal principal = mock(Principal.class);
         when(principal.getName()).thenReturn(email);
 
         transactionController.getStatement(principal);

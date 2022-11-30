@@ -35,19 +35,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @WithMockUser
 public class TransactionControllerIntegrationTest {
-
     @Autowired
     CustomerRepository customerRepository;
     @Autowired
     AccountRepository accountRepository;
-
     @Autowired
     TransactionRepository transactionRepository;
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     ObjectMapper objectMapper;
+    private Customer customer;
 
     @BeforeEach
     public void beforeEach(){
@@ -56,20 +54,17 @@ public class TransactionControllerIntegrationTest {
         customerRepository.deleteAll();
     }
 
-    @AfterEach()
-    public void after(){
-        transactionRepository.deleteAll();
-        accountRepository.deleteAll();
-        customerRepository.deleteAll();
+    public void prepareData(){
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        customer = new Customer("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password"));
+        Customer savedCustomer = customerRepository.save(customer);
+        Account account = new Account(new Date(), new BigDecimal(0), savedCustomer);
+        accountRepository.save(account);
     }
 
     @Test
     void shouldBeAbleToInvokeTransactionEndpoint() throws Exception {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        Customer customer = new Customer("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password"));
-        Customer savedCustomer = customerRepository.save(customer);
-        Account account = new Account(new Date(), new BigDecimal(0), savedCustomer);
-        accountRepository.save(account);
+        prepareData();
         String requestJson = objectMapper.writeValueAsString(new TransactionRequest(TRANSACTION_TYPE.CREDIT, new BigDecimal(500)));
 
         mockMvc.perform(post("/transaction")
@@ -81,11 +76,7 @@ public class TransactionControllerIntegrationTest {
 
     @Test
     void shouldBeAbleToGetTransactionHistoryOfAParticularUser() throws Exception {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        Customer customer = new Customer("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password"));
-        Customer savedCustomer = customerRepository.save(customer);
-        Account account = new Account(new Date(), new BigDecimal(0), savedCustomer);
-        accountRepository.save(account);
+        prepareData();
 
         mockMvc.perform(get("/transaction/statement")
                 .with(httpBasic("abc@gmail.com", "password")))
