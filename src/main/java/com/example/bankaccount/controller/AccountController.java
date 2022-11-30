@@ -20,7 +20,7 @@ public class AccountController {
 
     @PostMapping("/signup")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void signup(@RequestBody CustomerSignupRequest customerSignupRequest) throws IOException, AccountAlreadyExistsException {
+    public void signup(@RequestBody CustomerSignupRequest customerSignupRequest) throws AccountAlreadyExistsException {
         accountService.save(customerSignupRequest);
     }
 
