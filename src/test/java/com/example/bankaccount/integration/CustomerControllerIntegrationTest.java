@@ -35,16 +35,12 @@ public class CustomerControllerIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     CustomerRepository customerRepository;
-
     @Autowired
     AccountRepository accountRepository;
-
     @Autowired
     TransactionRepository transactionRepository;
-
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @BeforeEach
@@ -61,11 +57,8 @@ public class CustomerControllerIntegrationTest {
         String password = bCryptPasswordEncoder.encode("password");
         String requestJSON = objectMapper.writeValueAsString(new Customer("abc", "abc@gmail.com", password));
 
-        MvcResult mvcResult = mockMvc.perform(get("/login")
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJSON)
-        ).andReturn();
-
-        assertThat(mvcResult.getResponse().getStatus(), is(HttpStatus.OK.value()));
+        mockMvc.perform(get("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJSON)).andExpect(status().isOk());
     }
 
     @Test
