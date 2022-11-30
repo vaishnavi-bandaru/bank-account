@@ -10,11 +10,10 @@ import java.util.Map;
 @RestController
 public class CustomerController {
     @GetMapping("/login")
-    public Map<String, Object> login(Principal principal){
+    public Map<String, Object> login(Principal principal) {
         String email = principal.getName();
         Map<String, Object> userDetails = new HashMap<>();
         userDetails.put("email", email);
         return userDetails;
     }
-
 }

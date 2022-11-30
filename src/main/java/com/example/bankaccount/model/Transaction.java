@@ -17,13 +17,9 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private Date transaction_date;
-
     private String transaction_type;
-
     private BigDecimal transaction_amount;
-
     @OneToOne
     @JoinColumn(name = "account_number")
     private Account account;

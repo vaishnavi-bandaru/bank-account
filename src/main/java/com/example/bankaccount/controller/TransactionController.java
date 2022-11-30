@@ -15,9 +15,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
-
     AccountService accountService;
-
     TransactionService transactionService;
 
     @PostMapping
@@ -30,7 +28,6 @@ public class TransactionController {
     @GetMapping("/statement")
     @ResponseStatus(code = HttpStatus.OK)
     public StatementResponse getStatement(Principal principal) {
-        StatementResponse statementResponse = transactionService.statement(principal.getName());
-        return statementResponse;
+        return transactionService.statement(principal.getName());
     }
 }

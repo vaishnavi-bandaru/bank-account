@@ -17,11 +17,8 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private Date date_opened;
-
     private BigDecimal balance;
-
     @OneToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;

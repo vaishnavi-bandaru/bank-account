@@ -9,7 +9,6 @@ import com.example.bankaccount.repo.AccountRepository;
 import com.example.bankaccount.repo.CustomerRepository;
 import com.example.bankaccount.repo.TransactionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +47,13 @@ public class TransactionControllerIntegrationTest {
     private Customer customer;
 
     @BeforeEach
-    public void beforeEach(){
+    public void beforeEach() {
         transactionRepository.deleteAll();
         accountRepository.deleteAll();
         customerRepository.deleteAll();
     }
 
-    public void prepareData(){
+    public void prepareData() {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         customer = new Customer("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password"));
         Customer savedCustomer = customerRepository.save(customer);
@@ -69,8 +68,8 @@ public class TransactionControllerIntegrationTest {
 
         mockMvc.perform(post("/transaction")
                         .with(httpBasic("abc@gmail.com", "password"))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
                 .andExpect(status().isCreated());
     }
 
@@ -79,7 +78,7 @@ public class TransactionControllerIntegrationTest {
         prepareData();
 
         mockMvc.perform(get("/transaction/statement")
-                .with(httpBasic("abc@gmail.com", "password")))
+                        .with(httpBasic("abc@gmail.com", "password")))
                 .andExpect(status().isOk());
     }
 }

@@ -44,7 +44,7 @@ public class AccountControllerIntegrationTest {
     TransactionRepository transactionRepository;
 
     @BeforeEach
-    public void before(){
+    public void before() {
         transactionRepository.deleteAll();
         accountRepository.deleteAll();
         customerRepository.deleteAll();
@@ -56,8 +56,8 @@ public class AccountControllerIntegrationTest {
         String requestJson = objectMapper.writeValueAsString(new CustomerSignupRequest("abc", "abc@gmail.com", bCryptPasswordEncoder.encode("password")));
 
         mockMvc.perform(post("/account/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
                 .andExpect(status().isCreated());
     }
 

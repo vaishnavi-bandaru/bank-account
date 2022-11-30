@@ -6,8 +6,6 @@ import com.example.bankaccount.exceptions.AccountAlreadyExistsException;
 import com.example.bankaccount.model.Account;
 import com.example.bankaccount.model.Customer;
 import com.example.bankaccount.repo.AccountRepository;
-import com.example.bankaccount.repo.CustomerRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,8 +26,6 @@ public class AccountServiceTest {
     @Mock
     private AccountRepository accountRepository;
     @Mock
-    private CustomerRepository customerRepository;
-    @Mock
     private CustomerPrincipalService customerPrincipalService;
     @InjectMocks
     AccountService accountService;
@@ -49,12 +45,11 @@ public class AccountServiceTest {
     @Test
     void shouldBeAbleToReturnAccountWhenCustomerEmailIsGiven() {
         Customer customer = new Customer("abc", "abc@gmail.com", "password");
-        customerRepository.save(customer);
         Account account = new Account(new Date(), new BigDecimal(0), customer);
         accountRepository.save(account);
         long customer_id = customer.getId();
         when(customerPrincipalService.getByEmail("abc@gmail.com")).thenReturn(customer);
-        when(accountRepository.findByCustomer_Id(customer_id)).thenReturn(account);
+        when(accountRepository.findByCustomerId(customer_id)).thenReturn(account);
 
         Account fetchedAccount = accountService.getAccount(customer.getEmail());
 
@@ -62,14 +57,13 @@ public class AccountServiceTest {
     }
 
     @Test
-    void shouldBeAbleToFetchSummaryOfCustomer(){
+    void shouldBeAbleToFetchSummaryOfCustomer() {
         Customer customer = new Customer("abc", "abc@gmail.com", "password");
-        customerRepository.save(customer);
         Account account = new Account(new Date(), new BigDecimal(100), customer);
         accountRepository.save(account);
         when(customerPrincipalService.getByEmail("abc@gmail.com")).thenReturn(customer);
         when(accountService.getAccount("abc@gmail.com")).thenReturn(account);
-        SummaryResponse expectedSummary = new SummaryResponse(account.getId(), customer.getName(), account.getBalance());
+        SummaryResponse expectedSummary = SummaryResponse.builder().accountNumber(account.getId()).accountHolderName(customer.getName()).balance(account.getBalance()).build();
 
         SummaryResponse actualSummary = accountService.summary("abc@gmail.com");
 

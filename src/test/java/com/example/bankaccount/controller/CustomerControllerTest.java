@@ -1,7 +1,5 @@
 package com.example.bankaccount.controller;
 
-import com.example.bankaccount.repo.AccountRepository;
-import com.example.bankaccount.repo.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

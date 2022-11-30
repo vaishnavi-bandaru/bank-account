@@ -16,7 +16,6 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class CustomerPrincipalService implements UserDetailsService {
-
     CustomerRepository customerRepository;
 
     @Override

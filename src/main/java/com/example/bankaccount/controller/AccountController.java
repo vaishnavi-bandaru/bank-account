@@ -8,14 +8,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.security.Principal;
 
 @RestController
 @RequestMapping("account")
 @AllArgsConstructor
 public class AccountController {
-
     AccountService accountService;
 
     @PostMapping("/signup")
